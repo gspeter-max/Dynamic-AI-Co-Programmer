@@ -6,11 +6,11 @@ from dotenv import load_dotenv
 
 
 load_dotenv('/workspaces/Dynamic-AI-Co-Programmer/dynamic_api.env')
-account_name = 'freeCodeCamp' 
-repo_name = 'freeCodeCamp' 
+account_name = 'pytorch' 
+repo_name = 'pytorch' 
 target_file_name = f'downloaded/pytorch'
 hitting_url = f'https://api.github.com/repos/{account_name}/{repo_name}/zipball/main'
-api_key = os.getenv('dynamic_api') 
+api_key = os.getenv('dynamic_api')                                              # github api key ( token )  
 
 
 headers = {
