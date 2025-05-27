@@ -62,7 +62,7 @@ class make_embedding:
                         try:
                             combined_generated_existed_embedding = torch.cat((self.text_embedding(text_index),generated_left_embeddings_for_compressing_linear_layer),dim = 0)
                         except Exception as e :
-                            raise RuntimeWarning(f' error for this : {text_index} --> {type(text_index)}')
+                            raise RuntimeWarning(f' error : {e} \n  error for this children node  : {text_index} --> {type(text_index)}')
                         convered_2d_to_1d = combined_generated_existed_embedding.view(-1)
 
                 except Exception as e :
@@ -80,30 +80,34 @@ class make_embedding:
                         index = torch.tensor(self.type_to_index.get(node.type))
                         parent_node_embedding = self.type_embedding(index).unsqueeze(0)
 
+                        # make sure parent_node_embedding  is 2d because logic says ( we are need to combine child and parent node embedding so dims is important)
+
+
+                        # remember torch.stack() that is ok for computaional graph for torch torch know how to comptue that gradient of that
+                        # and converting that List[torch.tensors()] --> when you compute torch.tensor() that is brack computation graph
+                        # so the soltuion is torch.stack() but remember that , it is add or combine things with new demision unlike( torch.cat)
+
+                        child_embedding_uisng_recursion = self.get_embedding_for_this_node(child)  # after stack that become List() --> 2d
+
+                        # that time you see this error that means only parent is exists not child 
+                        # or might be you see 0D --> means no child 
+
+                        # another case ! i know you are too smart 
+
+                        if len(child_embedding_uisng_recursion.shape) != len(parent_node_embedding.shape):
+                            print(f'warrning len mismatch        parent_node_embedding : {len(parent_node_embedding.shape)}D \n  child_embedding_uisng_recursion  : {len(child_embedding_uisng_recursion.shape)}D')
+                
+                            return  parent_node_embedding.squeeze(0)
+
+                        a = torch.cat((parent_node_embedding , child_embedding_uisng_recursion), dim = 0)
+                        a = torch.mean(a, dim = 0).squeeze(0)
+
+                        temp.append(a)
+
                 except Exception as e:
-                    raise RuntimeError(f'error for this is here : {node.type}')
+                    raise RuntimeError(f' {e} \n error for this node  : {node.type}')
 
-                # make sure parent_node_embedding  is 2d because logic says ( we are need to combine child and parent node embedding so dims is important)
-
-
-                # remember torch.stack() that is ok for computaional graph for torch torch know how to comptue that gradient of that
-                # and converting that List[torch.tensors()] --> when you compute torch.tensor() that is brack computation graph
-                # so the soltuion is torch.stack() but remember that , it is add or combine things with new demision unlike( torch.cat)
-
-                child_embedding_uisng_recursion = self.get_embedding_for_this_node(child)  # after stack that become List() --> 2d
-
-
-                # if len(child_embedding_uisng_recursion) != len(parent_node_embedding):
-                #     print(f'warrning len mismatch        parent_node_embedding : {len(parent_node_embedding)}D \n  child_embedding_uisng_recursion  : {len(child_embedding_uisng_recursion)}D')
-
-                #     return  parent_node_embedding.squeeze(0)
-
-                # a = torch.cat((parent_node_embedding , child_embedding_uisng_recursion), dim = 0)
-                # a = torch.mean(a, dim = 0).squeeze(0)
-
-                # temp.append(a)
-
-        return temp
+        return torch.mean(torch.stack(temp)).squeeze(0)
 
     def __call__(self,node):        # for do that we are need to walk throw code_Graph
                                     # because how you give node ( type suing that type how you compute that children )
@@ -111,6 +115,6 @@ class make_embedding:
 
         # that fuction user is give node and get the combine embeding ( parent_type + text_embedding + child_embedding)
         node_embedding =  self.get_embedding_for_this_node(node)
-        return torch.stack(node_embedding).squeeze(0)
+        return node_embedding
 
 
