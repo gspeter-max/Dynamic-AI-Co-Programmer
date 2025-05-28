@@ -1,4 +1,4 @@
-! pip install tree_sitter tree_sitter_python
+# ! pip install tree_sitter tree_sitter_python
 from  tree_sitter import Language , Parser
 import  tree_sitter_python
 import torch
