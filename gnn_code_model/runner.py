@@ -1,6 +1,3 @@
-# ! pip install tree_sitter tree_sitter_python
-from  tree_sitter import Language , Parser
-import  tree_sitter_python
 import torch
 import torch.nn as nn
 import os
@@ -9,11 +6,11 @@ import os
 # with open('data.text' , 'w') as write_file:
 #     for data_file in os.listdir(source_file_path):
 #         data_file = source_file_path + '/' + data_file
-#         if '.' in data_file[-7:]:  
+#         if '.' in data_file[-7:]:
 #             with open(data_file, 'r') as data_files:
 #                 write_file.write(data_files.read())
 
-with open('data.text', 'r') as f:
+with open('/content/drive/MyDrive/data.text', 'r') as f:
     data = f.read()
 
 lan = Language(tree_sitter_python.language())
@@ -52,5 +49,25 @@ def extract_all(node):
 extract_all(code_graph.root_node)
 non_terminals_sorted = sorted(list(set(non_terminals_or_type_nodes)))
 type_to_index = {types : index for index, types in enumerate(non_terminals_sorted)}
-print(len(non_terminals_sorted)); print(len(type_to_index))
 
+
+# class split_data:
+
+#     def __init__(self,batch_size = 3):
+#         self.batch_size = batch_size
+
+#     def __call__(self, x):
+
+#         features = []
+#         target = []
+
+#         for i in range(len(x) - self.batch_size):
+#             features.append(x[(i * (self.batch_size - 1)): (i * (self.batch_size-1) ) + self.batch_size])
+#             target.append(x[(i * (self.batch_size -1)) + self.batch_size : (i * (self.batch_size -1)) + self.batch_size + 1])
+
+#         return torch.cat(features), torch.cat(target)
+
+# train_test_split = split_data(batch_size = 4)
+# test_data, train_data = train_test_split(non_terminals_sorted)
+
+# print(test_data)

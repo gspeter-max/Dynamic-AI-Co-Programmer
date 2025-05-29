@@ -1,10 +1,11 @@
 from transformers.models.gpt2 import GPT2Tokenizer
 tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
 
-class make_embedding:
+class make_embedding(torch.nn.Module):
 
     def __init__(self,type_to_index = type_to_index ,max_sub_tokens = 10,tokenizer = tokenizer):
-
+        
+        super().__init__()
         self.tokenizer = tokenizer
         vocab_size = len(tokenizer.get_vocab())
         self.type_to_index = type_to_index
