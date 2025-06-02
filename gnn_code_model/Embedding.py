@@ -1,3 +1,10 @@
+import torch 
+import torch.nn as nn 
+import os 
+from tree_sitter import Language, Parser 
+import tree_sitter_python 
+from gnn_code_model import type_to_index 
+
 from transformers.models.gpt2 import GPT2Tokenizer
 tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
 
